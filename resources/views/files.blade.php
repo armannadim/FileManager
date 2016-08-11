@@ -40,7 +40,7 @@
         <div class="header">
             Add Files
         </div>
-        <form class="ui form six" enctype="multipart/form-data" method="POST" action="{{URL('add-files')}}">
+        <form class="ui form six" enctype="multipart/form-data" method="POST" action="{{URL('add-file')}}">
             {{ csrf_field() }}
             <input type="hidden" name="person_id" value="{{ $person->person_id }}">
             <div class="content">

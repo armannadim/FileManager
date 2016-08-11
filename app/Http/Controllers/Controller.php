@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Request;
+
 use App\Models\File;
 use App\Models\Person;
 use App\Models\User;
@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Response;
 use Storage;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -145,28 +146,24 @@ class Controller extends BaseController
         }
     }
 
-    public function addFiles(){
-
-    }
-
-    //Exmaple of file upload to dropbox.... not tested yet
-    public function dropboxFileUpload(Filesystem $filemanager)
+    public function addFile(Filesystem $filemanager)
     {
-        //$Client = new Client(env('DROPBOX_TOKEN'), env('DROPBOX_SECRET'));
+        $request = Input::all();
+        $person_id = $request['person_id'];
+        $foldername = $this->getFolderName($person_id);
+        $file = Input::file('file');
+        $extension = $file->getClientOriginalExtension();
+        $dropboxFileName = $foldername . '/' . $request['caption'] . '.' . $extension;
 
-        $file = fopen(public_path('assets/images/logo.png'), 'rb');
-        $size = filesize(public_path('assets/images/logo.png'));
-        $dropboxFileName = '/myphoto4.png';
+        $filemanager->put($dropboxFileName, file_get_contents($file->getRealPath()));
+        return Redirect::to('files/' . $person_id);
 
-        //$filemanager->uploadFile($dropboxFileName,WriteMode::add(),$file, $size);
-        $filemanager->put($dropboxFileName, file_get_contents(Request::file('file')->getRealPath()));
-        //$Client->uploadFile($dropboxFileName,WriteMode::add(),$file, $size);
-        //$links['share'] = $Client->createShareableLink($dropboxFileName);
-        //$links['view'] = $Client->createTemporaryDirectLink($dropboxFileName);
-
-        //$links['share'] = $filemanager->createShareableLink($dropboxFileName);
-        //$links['view'] = $filemanager->createTemporaryDirectLink($dropboxFileName);
-        //print_r($links);
     }
 
+    public function getFolderName($person_id)
+    {
+        $name = Person::find($person_id)['name'];
+        return $name;
+
+    }
 }

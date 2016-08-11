@@ -19,7 +19,7 @@ Route::get('file/{dirname}/{fileName}', 'Controller@getFile');
 
 
 Route::post('add-person', 'Controller@addPerson');
-Route::post('add-file', 'Controller@addPerson');
+Route::post('add-file', 'Controller@addFile');
 
 Route::get('file1', function (Filesystem $filesystem) {
     return $filesystem->disk('dropbox')->get('test.txt');
